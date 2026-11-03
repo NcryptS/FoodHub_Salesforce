@@ -1,0 +1,82 @@
+.table-card {
+  border-radius: 10px;
+  padding: 1rem;
+  background: #ffffff;
+  border: 2px solid #e2e8f0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: all 0.2s ease;
+}
+
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.table-number {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.table-capacity {
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+.table-status-badge {
+  text-align: center;
+}
+
+.status-pill {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.table-available {
+  border-color: #10b981;
+}
+
+.badge-available {
+  background: #d1fae5;
+  color: #047857;
+}
+
+.table-occupied {
+  border-color: #ef4444;
+}
+
+.badge-occupied {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.table-reserved {
+  border-color: #f59e0b;
+}
+
+.badge-reserved {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.table-cleaning {
+  border-color: #3b82f6;
+}
+
+.badge-cleaning {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.table-actions {
+  display: flex;
+  justify-content: flex-end;
+}

@@ -1,0 +1,120 @@
+<template>
+  <lightning-card title="FoodHub Menu" icon-name="standard:flow">
+    <div class="slds-p-around_medium">
+      <div
+        class="slds-grid slds-gutters slds-wrap slds-m-bottom_medium align-center"
+      >
+        <div class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12">
+          <lightning-input
+            type="search"
+            placeholder="Search menu items..."
+            value={searchKey}
+            onchange={handleSearchChange}
+            variant="label-hidden"
+          >
+          </lightning-input>
+        </div>
+        <div
+          class="slds-col slds-size_1-of-1 slds-medium-size_6-of-12 slds-m-top_x-small"
+        >
+          <div class="category-tabs-container">
+            <template for:each={categoryTabs} for:item="tab">
+              <button
+                key={tab.value}
+                class={tab.buttonCssClass}
+                data-value={tab.value}
+                onclick={handleCategorySelect}
+              >
+                {tab.label}
+              </button>
+            </template>
+          </div>
+        </div>
+      </div>
+
+      <template if:true={isLoading}>
+        <div class="slds-align_absolute-center slds-p-around_large">
+          <lightning-spinner
+            alternative-text="Loading Menu"
+            size="medium"
+          ></lightning-spinner>
+        </div>
+      </template>
+
+      <template if:false={isLoading}>
+        <template if:true={hasFilteredItems}>
+          <div class="slds-grid slds-gutters slds-wrap">
+            <template for:each={filteredMenuItems} for:item="item">
+              <div
+                key={item.Id}
+                class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-3 slds-m-bottom_medium"
+              >
+                <div class="menu-card">
+                  <div class="menu-card-header">
+                    <div class="item-title-wrap">
+                      <span
+                        if:true={item.Vegetarian__c}
+                        class="badge-veg"
+                        title="Vegetarian"
+                        >🟢</span
+                      >
+                      <span
+                        if:false={item.Vegetarian__c}
+                        class="badge-nonveg"
+                        title="Non-Vegetarian"
+                        >🔴</span
+                      >
+                      <span class="item-name">{item.Name}</span>
+                    </div>
+                    <div class="item-price">
+                      <lightning-formatted-number
+                        value={item.Price__c}
+                        format-style="currency"
+                        currency-code="INR"
+                      ></lightning-formatted-number>
+                    </div>
+                  </div>
+                  <div class="item-category slds-m-bottom_x-small">
+                    <lightning-badge label={item.Category__c}></lightning-badge>
+                    <span class="prep-time slds-m-left_small"
+                      >⏱️ {item.Preparation_Time__c} mins</span
+                    >
+                  </div>
+                  <p class="item-description">{item.Description__c}</p>
+                  <div class="menu-card-footer slds-m-top_small">
+                    <template if:true={item.Available__c}>
+                      <lightning-button
+                        label="Add to Cart"
+                        icon-name="utility:add"
+                        variant="brand"
+                        data-id={item.Id}
+                        onclick={handleAddToCart}
+                      >
+                      </lightning-button>
+                    </template>
+                    <template if:false={item.Available__c}>
+                      <span class="slds-badge slds-theme_error">Sold Out</span>
+                    </template>
+                  </div>
+                </div>
+              </div>
+            </template>
+          </div>
+        </template>
+
+        <template if:false={hasFilteredItems}>
+          <div
+            class="slds-illustration slds-illustration_small slds-p-around_large"
+          >
+            <div class="slds-text-longform">
+              <h3 class="slds-text-heading_medium">No menu items found</h3>
+              <p class="slds-text-body_regular">
+                Try adjusting your search or category filter.
+              </p>
+            </div>
+          </div>
+        </template>
+      </template>
+    </div>
+  </lightning-card>
+</template>

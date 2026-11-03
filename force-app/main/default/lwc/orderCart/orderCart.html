@@ -1,0 +1,250 @@
+<template>
+  <lightning-card title="Order Cart" icon-name="utility:cart">
+    <div class="slds-p-around_medium">
+      <div class="slds-grid slds-gutters slds-wrap slds-m-bottom_medium">
+        <div
+          class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-m-bottom_x-small"
+        >
+          <lightning-input
+            type="text"
+            label="Customer Name"
+            value={customerName}
+            placeholder="Enter Customer Name..."
+            onchange={handleCustomerNameChange}
+          >
+          </lightning-input>
+        </div>
+        <div
+          class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-m-bottom_x-small"
+        >
+          <lightning-input
+            type="tel"
+            label="Phone Number"
+            value={customerPhone}
+            placeholder="Enter Phone Number..."
+            onchange={handleCustomerPhoneChange}
+          >
+          </lightning-input>
+        </div>
+        <div
+          class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-m-bottom_x-small"
+        >
+          <lightning-combobox
+            name="customerType"
+            label="Customer Type"
+            value={customerType}
+            options={customerTypeOptions}
+            onchange={handleCustomerTypeChange}
+          >
+          </lightning-combobox>
+          <div class="customer-status-pill slds-m-top_x-small">
+            <template if:true={isVipType}>
+              <span class="badge-vip-pill">⭐ VIP Customer (20% Discount)</span>
+            </template>
+            <template if:false={isVipType}>
+              <span class="badge-regular-pill">👤 Regular Customer</span>
+            </template>
+          </div>
+        </div>
+        <div
+          class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-m-bottom_x-small"
+        >
+          <lightning-combobox
+            name="table"
+            label="Select Table Number"
+            value={selectedTableId}
+            placeholder="Choose Table Number..."
+            options={tableOptions}
+            onchange={handleTableChange}
+          >
+          </lightning-combobox>
+          <template if:true={selectedTableId}>
+            <div class="table-status-pill slds-m-top_x-small">
+              <span class="badge-table-pill">🪑 {selectedTableDisplay}</span>
+            </div>
+          </template>
+        </div>
+      </div>
+
+      <div class="cart-items-wrapper slds-m-bottom_medium">
+        <template if:true={hasCartItems}>
+          <table class="slds-table slds-table_cell-buffer slds-table_bordered">
+            <thead>
+              <tr class="slds-line-height_reset">
+                <th scope="col"><div class="slds-truncate">Item</div></th>
+                <th scope="col"><div class="slds-truncate">Price</div></th>
+                <th scope="col"><div class="slds-truncate">Qty</div></th>
+                <th scope="col"><div class="slds-truncate">Total</div></th>
+                <th scope="col"><div class="slds-truncate">Action</div></th>
+              </tr>
+            </thead>
+            <tbody>
+              <template for:each={cartItems} for:item="item">
+                <tr key={item.Id}>
+                  <td>
+                    <div class="slds-truncate font-weight-semibold">
+                      {item.Name}
+                    </div>
+                  </td>
+                  <td>
+                    <lightning-formatted-number
+                      value={item.Price__c}
+                      format-style="currency"
+                      currency-code="INR"
+                    ></lightning-formatted-number>
+                  </td>
+                  <td>
+                    <div class="qty-control">
+                      <lightning-button-icon
+                        icon-name="utility:remove"
+                        size="x-small"
+                        data-id={item.Id}
+                        onclick={handleDecrementQty}
+                      ></lightning-button-icon>
+                      <span class="qty-text">{item.quantity}</span>
+                      <lightning-button-icon
+                        icon-name="utility:add"
+                        size="x-small"
+                        data-id={item.Id}
+                        onclick={handleIncrementQty}
+                      ></lightning-button-icon>
+                    </div>
+                  </td>
+                  <td>
+                    <lightning-formatted-number
+                      value={item.lineTotal}
+                      format-style="currency"
+                      currency-code="INR"
+                    ></lightning-formatted-number>
+                  </td>
+                  <td>
+                    <lightning-button-icon
+                      icon-name="utility:delete"
+                      variant="border-filled"
+                      alternative-text="Remove"
+                      data-id={item.Id}
+                      onclick={handleRemoveItem}
+                    ></lightning-button-icon>
+                  </td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+        </template>
+
+        <template if:false={hasCartItems}>
+          <div
+            class="empty-cart-box slds-align_absolute-center slds-p-around_large"
+          >
+            <div class="slds-text-align_center">
+              <lightning-icon
+                icon-name="utility:shopping_bag"
+                size="large"
+                class="slds-m-bottom_small"
+              ></lightning-icon>
+              <p class="slds-text-heading_small color-gray">
+                Your cart is currently empty.
+              </p>
+              <p class="slds-text-body_small color-gray">
+                Click "Add to Cart" on menu items to begin.
+              </p>
+            </div>
+          </div>
+        </template>
+      </div>
+
+      <template if:true={hasCartItems}>
+        <div class="cart-summary-box slds-p-around_medium slds-m-bottom_medium">
+          <div class="slds-grid slds-gutters slds-m-bottom_small align-center">
+            <div class="slds-col slds-size_1-of-2">
+              <lightning-input
+                type="number"
+                label="Discount (%)"
+                value={discountPercent}
+                min="0"
+                max="100"
+                step="0.5"
+                onchange={handleDiscountChange}
+              >
+              </lightning-input>
+            </div>
+            <div class="slds-col slds-size_1-of-2">
+              <template if:true={requiresApproval}>
+                <div class="approval-warning-badge">
+                  ⚠️ Discount > 10% requires Manager Approval
+                </div>
+              </template>
+            </div>
+          </div>
+
+          <div class="summary-line">
+            <span>Subtotal:</span>
+            <span class="font-semibold"
+              ><lightning-formatted-number
+                value={subtotal}
+                format-style="currency"
+                currency-code="INR"
+              ></lightning-formatted-number
+            ></span>
+          </div>
+
+          <div class="summary-line">
+            <span>Discount ({discountPercent}%):</span>
+            <span class="font-semibold color-red"
+              >-<lightning-formatted-number
+                value={discountAmount}
+                format-style="currency"
+                currency-code="INR"
+              ></lightning-formatted-number
+            ></span>
+          </div>
+
+          <div class="summary-line">
+            <span>Est. Tax ({estTaxRate}%):</span>
+            <span class="font-semibold"
+              ><lightning-formatted-number
+                value={estTaxAmount}
+                format-style="currency"
+                currency-code="INR"
+              ></lightning-formatted-number
+            ></span>
+          </div>
+
+          <div class="summary-line grand-total-line">
+            <span>Grand Total:</span>
+            <span class="font-bold color-green"
+              ><lightning-formatted-number
+                value={grandTotal}
+                format-style="currency"
+                currency-code="INR"
+              ></lightning-formatted-number
+            ></span>
+          </div>
+        </div>
+
+        <div class="slds-m-top_medium">
+          <button
+            class="slds-button slds-button_brand width-full btn-place-order"
+            onclick={handlePlaceOrder}
+            disabled={isSubmitting}
+          >
+            <template if:true={isSubmitting}>
+              <lightning-spinner
+                alternative-text="Submitting"
+                size="small"
+              ></lightning-spinner>
+            </template>
+            <template if:false={isSubmitting}>
+              🛒 Place Order (<lightning-formatted-number
+                value={grandTotal}
+                format-style="currency"
+                currency-code="INR"
+              ></lightning-formatted-number
+              >)
+            </template>
+          </button>
+        </div>
+      </template>
+    </div>
+  </lightning-card>
+</template>

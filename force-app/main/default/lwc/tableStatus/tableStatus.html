@@ -1,0 +1,61 @@
+<template>
+  <lightning-card title="Restaurant Table Status" icon-name="standard:location">
+    <div class="slds-p-around_medium">
+      <template if:true={isLoading}>
+        <div class="slds-align_absolute-center slds-p-around_large">
+          <lightning-spinner
+            alternative-text="Loading Tables"
+            size="medium"
+          ></lightning-spinner>
+        </div>
+      </template>
+
+      <template if:false={isLoading}>
+        <div class="slds-grid slds-gutters slds-wrap">
+          <template for:each={tables} for:item="tbl">
+            <div
+              key={tbl.Id}
+              class="slds-col slds-size_1-of-2 slds-medium-size_1-of-4 slds-m-bottom_medium"
+            >
+              <div class={tbl.cardCssClass}>
+                <div class="table-header">
+                  <span class="table-number">Table #{tbl.Table_Number__c}</span>
+                  <span class="table-capacity">👥 {tbl.Capacity__c} Seats</span>
+                </div>
+                <div class="table-status-badge slds-m-vertical_small">
+                  <span class={tbl.statusBadgeCssClass}>{tbl.Status__c}</span>
+                </div>
+                <div class="table-actions">
+                  <lightning-button-menu
+                    alternative-text="Change Table Status"
+                    variant="border-filled"
+                    icon-size="x-small"
+                    data-id={tbl.Id}
+                    onselect={handleStatusChangeSelect}
+                  >
+                    <lightning-menu-item
+                      value="Available"
+                      label="Mark Available"
+                    ></lightning-menu-item>
+                    <lightning-menu-item
+                      value="Occupied"
+                      label="Mark Occupied"
+                    ></lightning-menu-item>
+                    <lightning-menu-item
+                      value="Reserved"
+                      label="Mark Reserved"
+                    ></lightning-menu-item>
+                    <lightning-menu-item
+                      value="Cleaning"
+                      label="Mark Cleaning"
+                    ></lightning-menu-item>
+                  </lightning-button-menu>
+                </div>
+              </div>
+            </div>
+          </template>
+        </div>
+      </template>
+    </div>
+  </lightning-card>
+</template>

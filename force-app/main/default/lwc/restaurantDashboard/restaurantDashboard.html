@@ -1,0 +1,103 @@
+<template>
+  <div class="pos-app-wrapper">
+    <header class="pos-header">
+      <div class="header-brand">
+        <span class="brand-logo">🍽️</span>
+        <div class="brand-text">
+          <h1>FoodHub Restaurant</h1>
+          <span class="brand-sub">Management System</span>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <div class="role-selector">
+          <span class="role-label">Persona Mode:</span>
+          <lightning-button-group>
+            <lightning-button
+              label="Staff View"
+              icon-name="utility:user"
+              variant={staffVariant}
+              onclick={switchToStaffView}
+            >
+            </lightning-button>
+            <lightning-button
+              label="Manager View"
+              icon-name="utility:shield"
+              variant={managerVariant}
+              onclick={switchToManagerView}
+            >
+            </lightning-button>
+          </lightning-button-group>
+        </div>
+      </div>
+    </header>
+
+    <div class="slds-m-vertical_medium">
+      <c-order-summary summary-data={dashboardSummary}></c-order-summary>
+    </div>
+
+    <lightning-tabset variant="scoped" active-tab-value={activeTab}>
+      <lightning-tab label="🛒 Staff POS & Menu" value="staff_pos">
+        <div class="slds-grid slds-gutters slds-wrap">
+          <div
+            class="slds-col slds-size_1-of-1 slds-large-size_7-of-12 slds-m-bottom_medium"
+          >
+            <c-menu-items onaddtocart={handleAddToCart}></c-menu-items>
+          </div>
+          <div
+            class="slds-col slds-size_1-of-1 slds-large-size_5-of-12 slds-m-bottom_medium"
+          >
+            <c-order-cart
+              cart-items={cartItems}
+              onupdateqty={handleUpdateQty}
+              onremoveitem={handleRemoveItem}
+              onorderplaced={handleOrderPlaced}
+            >
+            </c-order-cart>
+          </div>
+        </div>
+      </lightning-tab>
+
+      <lightning-tab
+        label="📋 Order Status & Progression"
+        value="order_tracking"
+      >
+        <c-order-list
+          class="order-list-cmp"
+          onorderstatuschange={handleStateRefresh}
+        >
+        </c-order-list>
+      </lightning-tab>
+
+      <lightning-tab label="🪑 Table Status & Seating" value="table_mgmt">
+        <c-table-status
+          class="table-status-cmp"
+          ontablestatuschange={handleStateRefresh}
+        >
+        </c-table-status>
+      </lightning-tab>
+
+      <lightning-tab
+        label="🛡️ Manager Approval Queue"
+        value="manager_approvals"
+        if:true={isManagerMode}
+      >
+        <div class="slds-m-bottom_medium">
+          <c-discount-approval
+            class="discount-approval-cmp"
+            onapprovalchange={handleStateRefresh}
+          >
+          </c-discount-approval>
+        </div>
+      </lightning-tab>
+
+      <lightning-tab
+        label="⚙️ Menu & Price Controls"
+        value="menu_mgmt"
+        if:true={isManagerMode}
+      >
+        <c-menu-management></c-menu-management>
+      </lightning-tab>
+    </lightning-tabset>
+  </div>
+</template>

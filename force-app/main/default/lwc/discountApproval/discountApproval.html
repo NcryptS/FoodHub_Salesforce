@@ -1,0 +1,113 @@
+<template>
+  <lightning-card
+    title="Manager Discount Approvals Queue"
+    icon-name="utility:approval"
+  >
+    <div class="slds-p-around_medium">
+      <template if:true={isLoading}>
+        <div class="slds-align_absolute-center slds-p-around_large">
+          <lightning-spinner
+            alternative-text="Loading approvals"
+            size="medium"
+          ></lightning-spinner>
+        </div>
+      </template>
+
+      <template if:false={isLoading}>
+        <template if:true={hasPendingOrders}>
+          <table class="slds-table slds-table_cell-buffer slds-table_bordered">
+            <thead>
+              <tr class="slds-line-height_reset">
+                <th scope="col">Order #</th>
+                <th scope="col">Customer</th>
+                <th scope="col">Table</th>
+                <th scope="col">Subtotal</th>
+                <th scope="col">Requested Discount</th>
+                <th scope="col">Est. Grand Total</th>
+                <th scope="col">Items</th>
+                <th scope="col">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <template for:each={pendingOrders} for:item="ord">
+                <tr key={ord.id}>
+                  <td><strong>{ord.orderNumber}</strong></td>
+                  <td>
+                    <span>{ord.customerName}</span>
+                    <template if:true={ord.isVipCustomer}>
+                      <span class="badge-vip-pill slds-m-left_x-small"
+                        >⭐ VIP</span
+                      >
+                    </template>
+                  </td>
+                  <td>
+                    <span class="badge-table-cell">🪑 {ord.tableName}</span>
+                  </td>
+                  <td>
+                    <lightning-formatted-number
+                      value={ord.subtotal}
+                      format-style="currency"
+                      currency-code="INR"
+                    ></lightning-formatted-number>
+                  </td>
+                  <td>
+                    <span class="discount-badge-warning"
+                      >{ord.discountPercent}%</span
+                    >
+                  </td>
+                  <td>
+                    <lightning-formatted-number
+                      value={ord.grandTotal}
+                      format-style="currency"
+                      currency-code="INR"
+                    ></lightning-formatted-number>
+                  </td>
+                  <td>{ord.itemNames}</td>
+                  <td>
+                    <lightning-button-group>
+                      <lightning-button
+                        label="Approve"
+                        variant="success"
+                        icon-name="utility:check"
+                        data-id={ord.id}
+                        onclick={handleApprove}
+                      >
+                      </lightning-button>
+                      <lightning-button
+                        label="Reject"
+                        variant="destructive"
+                        icon-name="utility:close"
+                        data-id={ord.id}
+                        onclick={handleReject}
+                      >
+                      </lightning-button>
+                    </lightning-button-group>
+                  </td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+        </template>
+        <template if:false={hasPendingOrders}>
+          <div
+            class="empty-approval-box slds-align_absolute-center slds-p-around_large"
+          >
+            <div class="slds-text-align_center">
+              <lightning-icon
+                icon-name="utility:clock"
+                size="medium"
+                class="slds-m-bottom_small"
+              ></lightning-icon>
+              <h3 class="slds-text-heading_small color-gray">
+                No Pending Discount Approvals
+              </h3>
+              <p class="slds-text-body_small color-gray">
+                All requested discounts have been processed.
+              </p>
+            </div>
+          </div>
+        </template>
+      </template>
+    </div>
+  </lightning-card>
+</template>

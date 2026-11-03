@@ -1,0 +1,110 @@
+<template>
+  <lightning-card
+    title="Menu & Price Management (Manager)"
+    icon-name="standard:pricebook"
+  >
+    <div class="slds-p-around_medium">
+      <template if:true={isLoading}>
+        <div class="slds-align_absolute-center slds-p-around_large">
+          <lightning-spinner
+            alternative-text="Loading menu"
+            size="medium"
+          ></lightning-spinner>
+        </div>
+      </template>
+
+      <template if:false={isLoading}>
+        <p class="slds-m-bottom_small color-gray font-size-small">
+          ℹ️ Modifying menu item prices here updates future orders. Existing
+          past Order Items retain their original price at order creation.
+        </p>
+        <table class="slds-table slds-table_cell-buffer slds-table_bordered">
+          <thead>
+            <tr class="slds-line-height_reset">
+              <th scope="col">Item Name</th>
+              <th scope="col">Category</th>
+              <th scope="col">Current Price ($)</th>
+              <th scope="col">Availability</th>
+              <th scope="col">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <template for:each={menuItems} for:item="item">
+              <tr key={item.Id}>
+                <td><strong>{item.Name}</strong></td>
+                <td>
+                  <lightning-badge label={item.Category__c}></lightning-badge>
+                </td>
+                <td>
+                  <lightning-formatted-number
+                    value={item.Price__c}
+                    format-style="currency"
+                    currency-code="INR"
+                  ></lightning-formatted-number>
+                </td>
+                <td>
+                  <lightning-input
+                    type="checkbox-toggle"
+                    label="Available"
+                    variant="label-hidden"
+                    checked={item.Available__c}
+                    data-id={item.Id}
+                    onchange={handleToggleAvailable}
+                  >
+                  </lightning-input>
+                </td>
+                <td>
+                  <lightning-button
+                    label="Edit Price"
+                    variant="neutral"
+                    icon-name="utility:edit"
+                    size="small"
+                    data-id={item.Id}
+                    data-price={item.Price__c}
+                    onclick={handleOpenPriceModal}
+                  >
+                  </lightning-button>
+                </td>
+              </tr>
+            </template>
+          </tbody>
+        </table>
+      </template>
+    </div>
+    <template if:true={isModalOpen}>
+      <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open">
+        <div class="slds-modal__container">
+          <header class="slds-modal__header">
+            <h2 class="slds-modal__title slds-hyphenate">
+              Update Menu Item Price
+            </h2>
+          </header>
+          <div class="slds-modal__content slds-p-around_medium">
+            <lightning-input
+              type="number"
+              label="New Price ($)"
+              value={editingPrice}
+              min="0.01"
+              step="0.01"
+              onchange={handleNewPriceChange}
+            >
+            </lightning-input>
+          </div>
+          <footer class="slds-modal__footer">
+            <lightning-button
+              label="Cancel"
+              onclick={handleCloseModal}
+              class="slds-m-right_x-small"
+            ></lightning-button>
+            <lightning-button
+              label="Save Price"
+              variant="brand"
+              onclick={handleSavePrice}
+            ></lightning-button>
+          </footer>
+        </div>
+      </section>
+      <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+  </lightning-card>
+</template>

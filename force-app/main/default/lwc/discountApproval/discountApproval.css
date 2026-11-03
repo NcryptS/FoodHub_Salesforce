@@ -1,0 +1,37 @@
+.discount-badge-warning {
+  background-color: #fef3c7;
+  color: #d97706;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  border: 1px solid #fcd34d;
+}
+
+.empty-approval-box {
+  background: #f8fafc;
+  border: 1px dashed #cbd5e1;
+  border-radius: 8px;
+}
+
+.color-gray {
+  color: #64748b;
+}
+
+.badge-vip-pill {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 0.7rem;
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+.badge-table-cell {
+  font-weight: 600;
+  color: #0369a1;
+  background: #f0f9ff;
+  padding: 2px 8px;
+  border-radius: 6px;
+  border: 1px solid #e0f2fe;
+}

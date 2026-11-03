@@ -1,0 +1,81 @@
+<template>
+  <div class="slds-grid slds-gutters slds-wrap">
+    <div
+      class="slds-col slds-size_1-of-2 slds-medium-size_1-of-4 slds-m-bottom_medium"
+    >
+      <div class="metric-card metric-primary">
+        <div class="metric-icon">
+          <lightning-icon
+            icon-name="standard:orders"
+            size="medium"
+            variant="inverse"
+          ></lightning-icon>
+        </div>
+        <div class="metric-content">
+          <div class="metric-label">Today's Orders</div>
+          <div class="metric-value">{summary.todaysOrderCount}</div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="slds-col slds-size_1-of-2 slds-medium-size_1-of-4 slds-m-bottom_medium"
+    >
+      <div class="metric-card metric-warning">
+        <div class="metric-icon">
+          <lightning-icon
+            icon-name="utility:clock"
+            size="medium"
+            variant="inverse"
+          ></lightning-icon>
+        </div>
+        <div class="metric-content">
+          <div class="metric-label">Pending Approvals</div>
+          <div class="metric-value">{summary.pendingApprovalCount}</div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="slds-col slds-size_1-of-2 slds-medium-size_1-of-4 slds-m-bottom_medium"
+    >
+      <div class="metric-card metric-info">
+        <div class="metric-icon">
+          <lightning-icon
+            icon-name="custom:custom63"
+            size="medium"
+            variant="inverse"
+          ></lightning-icon>
+        </div>
+        <div class="metric-content">
+          <div class="metric-label">In Kitchen (Preparing)</div>
+          <div class="metric-value">{summary.preparingOrderCount}</div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="slds-col slds-size_1-of-2 slds-medium-size_1-of-4 slds-m-bottom_medium"
+    >
+      <div class="metric-card metric-success">
+        <div class="metric-icon">
+          <lightning-icon
+            icon-name="utility:moneybag"
+            size="medium"
+            variant="inverse"
+          ></lightning-icon>
+        </div>
+        <div class="metric-content">
+          <div class="metric-label">Today's Sales</div>
+          <div class="metric-value">
+            <lightning-formatted-number
+              value={summary.todaysSales}
+              format-style="currency"
+              currency-code="INR"
+            ></lightning-formatted-number>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>

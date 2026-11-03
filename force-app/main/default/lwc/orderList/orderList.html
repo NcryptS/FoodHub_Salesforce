@@ -1,0 +1,179 @@
+<template>
+  <lightning-card title="Active & Recent Orders" icon-name="standard:orders">
+    <div class="slds-p-around_medium">
+      <template if:true={isLoading}>
+        <div class="slds-align_absolute-center slds-p-around_large">
+          <lightning-spinner
+            alternative-text="Loading orders"
+            size="medium"
+          ></lightning-spinner>
+        </div>
+      </template>
+
+      <template if:false={isLoading}>
+        <template if:true={hasOrders}>
+          <table class="slds-table slds-table_cell-buffer slds-table_bordered">
+            <thead>
+              <tr class="slds-line-height_reset">
+                <th scope="col">Order #</th>
+                <th scope="col">Customer</th>
+                <th scope="col">Table</th>
+                <th scope="col">Status</th>
+                <th scope="col">Subtotal</th>
+                <th scope="col">Discount</th>
+                <th scope="col">Tax Rate</th>
+                <th scope="col">Grand Total</th>
+                <th scope="col">Items</th>
+                <th scope="col">Progression Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <template for:each={orders} for:item="ord">
+                <tr key={ord.id}>
+                  <td><strong>{ord.orderNumber}</strong></td>
+                  <td>
+                    <span>{ord.customerName}</span>
+                    <template if:true={ord.isVipCustomer}>
+                      <span class="badge-vip-pill slds-m-left_x-small"
+                        >⭐ VIP</span
+                      >
+                    </template>
+                  </td>
+                  <td>
+                    <span class="badge-table-cell">🪑 {ord.tableName}</span>
+                  </td>
+                  <td>
+                    <span class={ord.statusBadgeClass}>{ord.status}</span>
+                  </td>
+                  <td>
+                    <lightning-formatted-number
+                      value={ord.subtotal}
+                      format-style="currency"
+                      currency-code="INR"
+                    ></lightning-formatted-number>
+                  </td>
+                  <td>
+                    <span if:true={ord.discountPercent}
+                      >{ord.discountPercent}% ({ord.discountStatus})</span
+                    >
+                    <span if:false={ord.discountPercent}>0%</span>
+                  </td>
+                  <td>
+                    <span if:true={ord.taxRate}>{ord.taxRate}%</span>
+                    <span if:false={ord.taxRate}>--</span>
+                  </td>
+                  <td>
+                    <strong
+                      ><lightning-formatted-number
+                        value={ord.grandTotal}
+                        format-style="currency"
+                        currency-code="INR"
+                      ></lightning-formatted-number
+                    ></strong>
+                  </td>
+                  <td>
+                    <span class="items-cell">{ord.itemNamesText}</span>
+                  </td>
+                  <td>
+                    <template if:true={ord.isDraft}>
+                      <lightning-button
+                        label="Confirm & Call Tax API"
+                        variant="brand"
+                        icon-name="utility:send"
+                        size="small"
+                        data-id={ord.id}
+                        onclick={handleConfirmOrder}
+                      >
+                      </lightning-button>
+                      <lightning-button
+                        label="Cancel"
+                        variant="destructive-text"
+                        size="small"
+                        class="slds-m-left_x-small"
+                        data-id={ord.id}
+                        onclick={handleCancelOrder}
+                      >
+                      </lightning-button>
+                    </template>
+
+                    <template if:true={ord.isConfirmed}>
+                      <lightning-button
+                        label="Start Preparing"
+                        variant="success"
+                        icon-name="utility:play"
+                        size="small"
+                        data-id={ord.id}
+                        onclick={handleStartPreparing}
+                      >
+                      </lightning-button>
+                      <lightning-button
+                        label="Cancel"
+                        variant="destructive-text"
+                        size="small"
+                        class="slds-m-left_x-small"
+                        data-id={ord.id}
+                        onclick={handleCancelOrder}
+                      >
+                      </lightning-button>
+                    </template>
+
+                    <template if:true={ord.isPreparing}>
+                      <lightning-button
+                        label="Mark Ready"
+                        variant="brand"
+                        icon-name="utility:food"
+                        size="small"
+                        data-id={ord.id}
+                        onclick={handleMarkReady}
+                      >
+                      </lightning-button>
+                    </template>
+
+                    <template if:true={ord.isReady}>
+                      <lightning-button
+                        label="Serve Order"
+                        variant="success"
+                        icon-name="utility:check"
+                        size="small"
+                        data-id={ord.id}
+                        onclick={handleServeOrder}
+                      >
+                      </lightning-button>
+                    </template>
+
+                    <template if:true={ord.isServed}>
+                      <span class="slds-badge slds-theme_success"
+                        >Completed</span
+                      >
+                    </template>
+
+                    <template if:true={ord.isCancelled}>
+                      <span class="slds-badge slds-theme_error">Cancelled</span>
+                    </template>
+                  </td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+        </template>
+
+        <template if:false={hasOrders}>
+          <div
+            class="empty-orders-box slds-align_absolute-center slds-p-around_large"
+          >
+            <div class="slds-text-align_center">
+              <lightning-icon
+                icon-name="standard:orders"
+                size="large"
+                class="slds-m-bottom_small"
+              ></lightning-icon>
+              <h3 class="slds-text-heading_small color-gray">
+                No Orders Created Yet
+              </h3>
+            </div>
+          </div>
+        </template>
+      </template>
+    </div>
+  </lightning-card>
+</template>
